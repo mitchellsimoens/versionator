@@ -1,7 +1,7 @@
-# versionator
+# @mitchellsimoens/versionator
 
-[![npm](https://img.shields.io/npm/v/versionator.svg)](https://www.npmjs.com/package/versionator)
-[![npm](https://img.shields.io/npm/dm/versionator.svg)](https://www.npmjs.com/package/versionator)
+[![npm](https://img.shields.io/npm/v/@mitchellsimoens/versionator.svg)](https://www.npmjs.com/package/@mitchellsimoens/versionator)
+[![npm](https://img.shields.io/npm/dm/@mitchellsimoens/versionator.svg)](https://www.npmjs.com/package/@mitchellsimoens/versionator)
 [![CircleCI](https://circleci.com/gh/mitchellsimoens/versionator.svg?style=svg&circle-token=a552b2094264094f567d0e9c0e1c76d6e44b7a04)](https://circleci.com/gh/mitchellsimoens/versionator)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
@@ -12,10 +12,10 @@ Allows checking locally installed node modules for updates against [npm](https:/
 
 ```shell
 # with npm
-npm install -g versionator
+npm install -g @mitchellsimoens/versionator
 
 # or with yarn
-yarn global add versionator
+yarn global add @mitchellsimoens/versionator
 ```
 
 ## Usage
@@ -45,7 +45,7 @@ versionator --shallow
 While you will likely only use the cli means of this, you can programmatically execute this. When you do so, the table will not render, the array of reports will be returned.
 
 ```typescript
-import versionator, { Report } from 'versionator';
+import versionator, { Report } from '@mitchellsimoens/versionator';
 
 (async (): void => {
   const reports: Report[] = await versionator();
@@ -55,7 +55,7 @@ import versionator, { Report } from 'versionator';
 You can also pass the options to the `versionator` function:
 
 ```typescript
-import versionator, { Report } from 'versionator';
+import versionator, { Report } from '@mitchellsimoens/versionator';
 
 (async (): void => {
   const reports: Report[] = await versionator({
