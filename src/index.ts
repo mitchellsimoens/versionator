@@ -3,7 +3,17 @@ import { dirname, join } from 'path';
 import readPkg, { NormalizedPackageJson } from 'read-pkg';
 import semver from 'semver';
 import request from './request';
-import { Arguments, DependencyProps, FullReport, FullResult, Info, InfoReport, Report, Result } from '../typings';
+import {
+  Arguments,
+  DependencyProps,
+  FullReport,
+  FullResult,
+  Info,
+  InfoReport,
+  ReleaseValues,
+  Report,
+  Result,
+} from '../typings';
 
 export * from '../typings';
 
@@ -16,6 +26,16 @@ type SortFn = (left: any, right: any) => SortRet;
 
 const dependencyMap = new Map<string, Info[]>();
 const packageMap = new Map<string, string>();
+
+const releaseValues: ReleaseValues = {
+  prerelease: 1,
+  prepatch: 2,
+  patch: 3,
+  preminor: 4,
+  minor: 5,
+  premajor: 6,
+  major: 7,
+};
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const sort = (key: string): SortFn => (left: any, right: any): SortRet => {
@@ -94,6 +114,25 @@ const checkLatestVersions = (): Promise<void[]> =>
     ),
   );
 
+const checkForUpdate = (version: string, latest: string, args: Arguments): boolean => {
+  const diff = semver.diff(version, latest);
+
+  if (diff === null) {
+    return false;
+  }
+
+  const { 'allow-update': allowUpdate } = args;
+
+  if (!allowUpdate) {
+    return true;
+  }
+
+  const allowedValue = releaseValues[allowUpdate];
+  const diffValue = releaseValues[diff];
+
+  return allowedValue < diffValue;
+};
+
 const assertSuccess = (args: Arguments): void => {
   const { 'allow-prefixed': allowPrefixed } = args;
 
@@ -102,7 +141,7 @@ const assertSuccess = (args: Arguments): void => {
 
     if (latest) {
       infos.forEach((info: Result): void => {
-        const hasUpdate = !semver.intersects(info.version, latest);
+        const hasUpdate = checkForUpdate(info.version, latest, args);
         const success = allowPrefixed ? !hasUpdate : !info.hasPrefix && !hasUpdate;
 
         Object.assign(info, {

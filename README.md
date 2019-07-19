@@ -46,6 +46,14 @@ If you need to exclude a path, you can provide the `--exclude` as a glob relativ
 versionator --exclude "examples/**/package.json"
 ```
 
+If you want to allow certain levels of updates, you can use the `--allow-update` to specify the highest difference:
+
+```shell
+versionator --allow-update patch
+```
+
+The values can be: major, ≈, minor, preminor, patch, prepatch, prerelease. Reminder, npm uses [semver](https://semver.org/).
+
 ## Programmatic Execution
 
 While you will likely only use the cli means of this, you can programmatically execute this. When you do so, the table will not render, the array of reports will be returned.

@@ -12,7 +12,13 @@
   "cSpell.words": [
     "colorette",
     "globby",
+    "mitchellsimoens",
     "npmjs",
+    "premajor",
+    "preminor",
+    "prepatch",
+    "prerelease",
+    "unprefixed",
     "versionator"
   ]
 }

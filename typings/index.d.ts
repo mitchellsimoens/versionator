@@ -1,5 +1,8 @@
+import { ReleaseType } from 'semver';
+
 export interface Arguments {
   'allow-prefixed'?: boolean;
+  'allow-update'?: ReleaseType;
   exclude?: string;
   shallow?: boolean;
 }
@@ -35,3 +38,7 @@ export type FullReport = DependencyReport & {
 };
 
 export type Report = InfoReport | FullReport;
+
+export type ReleaseValues = {
+  [release in ReleaseType]: number;
+};

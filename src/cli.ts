@@ -5,6 +5,7 @@ import { Arguments, FullReport } from '../typings';
 
 const { argv }: Argv<Arguments> = yargs
   .boolean('allow-prefixed')
+  .string('allow-update')
   .string('exclude')
   .boolean('shallow');
 
