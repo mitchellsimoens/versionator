@@ -3,12 +3,15 @@
   "version": "0.0.1",
   "description": "Check for module version updates supporting monorepos",
   "main": "lib/index.js",
+  "types": "./lib/index.d.ts",
   "bin": {
     "versionator": "./bin/versionator"
   },
   "files": [
+    "assets",
     "bin",
-    "lib"
+    "lib",
+    "typings"
   ],
   "scripts": {
     "build": "tsc",

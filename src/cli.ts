@@ -3,7 +3,7 @@ import versionator from './index';
 import render from './render';
 import { Arguments, Report } from '../typings';
 
-const { argv }: Argv<Arguments> = yargs.boolean('allow-prefixed');
+const { argv }: Argv<Arguments> = yargs.boolean('allow-prefixed').boolean('shallow');
 
 (async (): Promise<void> => {
   const reports = await versionator(argv);

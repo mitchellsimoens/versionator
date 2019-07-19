@@ -5,6 +5,8 @@ import semver from 'semver';
 import request from './request';
 import { Arguments, DependencyProps, Report, Result } from '../typings';
 
+export * from '../typings';
+
 const PREFIX_RE = /^\^|~/;
 
 type SortRet = -1 | 0 | 1;
@@ -92,17 +94,22 @@ const checkPackage = async (cwd: string, args: Arguments): Promise<Report> => {
   };
 };
 
-const versionator = async (args: Arguments): Promise<Report[]> => {
+const versionator = async (args: Arguments = {}): Promise<Report[]> => {
   const cwd = process.cwd();
-  const paths = await globby([`${cwd}/**/package.json`, `!${cwd}/**/node_modules`]);
 
-  const reports: Report[] = await Promise.all(
-    paths.map((pkg: string): Promise<Report> => checkPackage(dirname(pkg), args)),
-  );
+  if (args.shallow) {
+    const paths = await globby([`${cwd}/**/package.json`, `!${cwd}/**/node_modules`]);
 
-  reports.sort(sort('cwd'));
+    const reports: Report[] = await Promise.all(
+      paths.map((pkg: string): Promise<Report> => checkPackage(dirname(pkg), args)),
+    );
 
-  return reports;
+    reports.sort(sort('cwd'));
+
+    return reports;
+  }
+
+  return [await checkPackage(cwd, args)];
 };
 
 export default versionator;

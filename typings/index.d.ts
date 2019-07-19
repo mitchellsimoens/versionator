@@ -1,5 +1,6 @@
 export interface Arguments {
   'allow-prefixed'?: boolean;
+  shallow?: boolean;
 }
 
 export type DependencyProps = 'dependencies' | 'devDependencies' | 'peerDependencies' | 'optionalDependencies';
