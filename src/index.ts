@@ -1,5 +1,5 @@
 import globby from 'globby';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import readPkg, { NormalizedPackageJson } from 'read-pkg';
 import semver from 'semver';
 import request from './request';
@@ -98,18 +98,24 @@ const versionator = async (args: Arguments = {}): Promise<Report[]> => {
   const cwd = process.cwd();
 
   if (args.shallow) {
-    const paths = await globby([`${cwd}/**/package.json`, `!${cwd}/**/node_modules`]);
-
-    const reports: Report[] = await Promise.all(
-      paths.map((pkg: string): Promise<Report> => checkPackage(dirname(pkg), args)),
-    );
-
-    reports.sort(sort('cwd'));
-
-    return reports;
+    return [await checkPackage(cwd, args)];
   }
 
-  return [await checkPackage(cwd, args)];
+  const globs = [`${cwd}/**/package.json`, `!${cwd}/**/node_modules`];
+
+  if (args.exclude) {
+    globs.push(`!${join(cwd, args.exclude)}`);
+  }
+
+  const paths = await globby(globs);
+
+  const reports: Report[] = await Promise.all(
+    paths.map((pkg: string): Promise<Report> => checkPackage(dirname(pkg), args)),
+  );
+
+  reports.sort(sort('cwd'));
+
+  return reports;
 };
 
 export default versionator;

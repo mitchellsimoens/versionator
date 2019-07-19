@@ -1,5 +1,6 @@
 export interface Arguments {
   'allow-prefixed'?: boolean;
+  exclude?: string;
   shallow?: boolean;
 }
 

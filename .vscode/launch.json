@@ -12,9 +12,7 @@
       "ts-node/register"
     ],
     "args": [
-      "${workspaceFolder}/src/cli.ts",
-      "--foo",
-      "bar"
+      "${workspaceFolder}/src/cli.ts"
     ],
     "env": {
       "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json"

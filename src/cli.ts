@@ -3,7 +3,10 @@ import versionator from './index';
 import render from './render';
 import { Arguments, Report } from '../typings';
 
-const { argv }: Argv<Arguments> = yargs.boolean('allow-prefixed').boolean('shallow');
+const { argv }: Argv<Arguments> = yargs
+  .boolean('allow-prefixed')
+  .string('exclude')
+  .boolean('shallow');
 
 (async (): Promise<void> => {
   const reports = await versionator(argv);
@@ -15,6 +18,9 @@ const { argv }: Argv<Arguments> = yargs.boolean('allow-prefixed').boolean('shall
     }
 
     render(report);
+
+    /* eslint-disable-next-line no-console */
+    console.log(''); // space between tables
   });
 
   if (hasFailure) {

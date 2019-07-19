@@ -40,6 +40,12 @@ You can disable the nested `package.json` lookup and only look at the `package.j
 versionator --shallow
 ```
 
+If you need to exclude a path, you can provide the `--exclude` as a glob relative to the current directory:
+
+```shell
+versionator --exclude "foo/**/*"
+```
+
 ## Programmatic Execution
 
 While you will likely only use the cli means of this, you can programmatically execute this. When you do so, the table will not render, the array of reports will be returned.
