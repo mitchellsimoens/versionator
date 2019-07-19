@@ -47,7 +47,7 @@ While you will likely only use the cli means of this, you can programmatically e
 ```typescript
 import versionator, { Report } from '@mitchellsimoens/versionator';
 
-(async (): void => {
+(async (): Promise<void> => {
   const reports: Report[] = await versionator();
 })();
 ```
@@ -57,7 +57,7 @@ You can also pass the options to the `versionator` function:
 ```typescript
 import versionator, { Report } from '@mitchellsimoens/versionator';
 
-(async (): void => {
+(async (): Promise<void> => {
   const reports: Report[] = await versionator({
     'allow-prefixed': true,
     shallow: true,
