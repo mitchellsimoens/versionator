@@ -1,6 +1,6 @@
 {
   "name": "@mitchellsimoens/versionator",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Check for module version updates supporting monorepos",
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
