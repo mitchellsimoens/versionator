@@ -43,7 +43,7 @@ versionator --shallow
 If you need to exclude a path, you can provide the `--exclude` as a glob relative to the current directory:
 
 ```shell
-versionator --exclude "foo/**/*"
+versionator --exclude "examples/**/package.json"
 ```
 
 ## Programmatic Execution
@@ -66,6 +66,7 @@ import versionator, { Report } from '@mitchellsimoens/versionator';
 (async (): Promise<void> => {
   const reports: Report[] = await versionator({
     'allow-prefixed': true,
+    exclude: 'examples/{foo,bar}/package.json',
     shallow: true,
   });
 })();

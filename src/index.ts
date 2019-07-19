@@ -3,7 +3,7 @@ import { dirname, join } from 'path';
 import readPkg, { NormalizedPackageJson } from 'read-pkg';
 import semver from 'semver';
 import request from './request';
-import { Arguments, DependencyProps, Report, Result } from '../typings';
+import { Arguments, DependencyProps, FullReport, FullResult, Info, InfoReport, Report, Result } from '../typings';
 
 export * from '../typings';
 
@@ -13,6 +13,9 @@ type SortRet = -1 | 0 | 1;
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type SortFn = (left: any, right: any) => SortRet;
+
+const dependencyMap = new Map<string, Info[]>();
+const packageMap = new Map<string, string>();
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 const sort = (key: string): SortFn => (left: any, right: any): SortRet => {
@@ -27,62 +30,47 @@ const sort = (key: string): SortFn => (left: any, right: any): SortRet => {
   return 0;
 };
 
-const checkPackages = async (
-  object: NormalizedPackageJson,
-  key: DependencyProps,
-  args: Arguments,
-): Promise<Result[]> => {
+const collectInfo = (object: NormalizedPackageJson, key: DependencyProps): Result[] => {
   const versionObj = object[key];
   const results: Result[] = [];
 
   if (versionObj) {
-    await Promise.all(
-      Object.keys(versionObj).map(
-        async (name: string): Promise<void> => {
-          const version = versionObj[name];
-          const versionParsed = version.replace(PREFIX_RE, '');
-          const hasPrefix = version !== versionParsed;
-          const {
-            'dist-tags': { latest },
-          } = await request(name);
-          const hasUpdate = !semver.intersects(version, latest);
-          const success = args['allow-prefixed'] ? !hasUpdate : !hasPrefix && !hasUpdate;
+    Object.keys(versionObj).forEach((name: string): void => {
+      const version = versionObj[name];
+      const versionParsed = version.replace(PREFIX_RE, '');
+      const hasPrefix = version !== versionParsed;
+      const mapItem = dependencyMap.get(name);
+      const result: Info = {
+        hasPrefix,
+        name,
+        version,
+        versionParsed,
+      };
 
-          results.push({
-            hasPrefix,
-            hasUpdate,
-            latest,
-            name,
-            success,
-            version,
-            versionParsed,
-          });
-        },
-      ),
-    );
+      if (mapItem) {
+        mapItem.push(result);
+      } else {
+        dependencyMap.set(name, [result]);
+      }
+
+      results.push(result);
+    });
+
+    results.sort(sort('name'));
   }
-
-  results.sort(sort('name'));
 
   return results;
 };
 
-const checkSuccess = (lastSuccess: boolean, result: Result): boolean => (result.success ? lastSuccess : result.success);
-
-const checkPackage = async (cwd: string, args: Arguments): Promise<Report> => {
+const collectPackageInfo = async (cwd: string): Promise<InfoReport> => {
   const pkg = await readPkg({
     cwd,
   });
 
-  const dependencies = await checkPackages(pkg, 'dependencies', args);
-  const devDependencies = await checkPackages(pkg, 'devDependencies', args);
-  const optionalDependencies = await checkPackages(pkg, 'optionalDependencies', args);
-  const peerDependencies = await checkPackages(pkg, 'peerDependencies', args);
-  const success =
-    dependencies.reduce(checkSuccess, true) &&
-    devDependencies.reduce(checkSuccess, true) &&
-    optionalDependencies.reduce(checkSuccess, true) &&
-    peerDependencies.reduce(checkSuccess, true);
+  const dependencies = collectInfo(pkg, 'dependencies');
+  const devDependencies = collectInfo(pkg, 'devDependencies');
+  const optionalDependencies = collectInfo(pkg, 'optionalDependencies');
+  const peerDependencies = collectInfo(pkg, 'peerDependencies');
 
   return {
     cwd,
@@ -90,32 +78,83 @@ const checkPackage = async (cwd: string, args: Arguments): Promise<Report> => {
     devDependencies,
     optionalDependencies,
     peerDependencies,
-    success,
   };
 };
 
-const versionator = async (args: Arguments = {}): Promise<Report[]> => {
-  const cwd = process.cwd();
+const checkLatestVersions = (): Promise<void[]> =>
+  Promise.all(
+    Array.from(dependencyMap.keys()).map(
+      async (name: string): Promise<void> => {
+        const {
+          'dist-tags': { latest },
+        } = await request(name);
 
-  if (args.shallow) {
-    return [await checkPackage(cwd, args)];
-  }
+        packageMap.set(name, latest);
+      },
+    ),
+  );
 
+const assertSuccess = (args: Arguments): void => {
+  const { 'allow-prefixed': allowPrefixed } = args;
+
+  dependencyMap.forEach((infos: Result[], key: string): void => {
+    const latest = packageMap.get(key);
+
+    if (latest) {
+      infos.forEach((info: Result): void => {
+        const hasUpdate = !semver.intersects(info.version, latest);
+        const success = allowPrefixed ? !hasUpdate : !info.hasPrefix && !hasUpdate;
+
+        Object.assign(info, {
+          hasUpdate,
+          latest,
+          success,
+        });
+      });
+    }
+  });
+};
+
+const checkSuccess = (lastSuccess: boolean, result: Result): boolean =>
+  (result as FullResult).success ? lastSuccess : (result as FullResult).success;
+
+const assertReportSuccess = (reports: Report[]): FullReport[] =>
+  reports.map(
+    (report: Report): FullReport => ({
+      ...report,
+      success:
+        report.dependencies.reduce(checkSuccess, true) &&
+        report.devDependencies.reduce(checkSuccess, true) &&
+        report.optionalDependencies.reduce(checkSuccess, true) &&
+        report.peerDependencies.reduce(checkSuccess, true),
+    }),
+  );
+
+const getGlobs = (cwd: string, args: Arguments): string[] => {
   const globs = [`${cwd}/**/package.json`, `!${cwd}/**/node_modules`];
 
   if (args.exclude) {
     globs.push(`!${join(cwd, args.exclude)}`);
   }
 
-  const paths = await globby(globs);
+  return globs;
+};
+
+const versionator = async (args: Arguments = {}): Promise<FullReport[]> => {
+  const cwd = process.cwd();
+  const paths = args.shallow ? [cwd] : await globby(getGlobs(cwd, args));
 
   const reports: Report[] = await Promise.all(
-    paths.map((pkg: string): Promise<Report> => checkPackage(dirname(pkg), args)),
+    paths.map((pkg: string): Promise<Report> => collectPackageInfo(dirname(pkg))),
   );
 
   reports.sort(sort('cwd'));
 
-  return reports;
+  await checkLatestVersions();
+
+  assertSuccess(args);
+
+  return assertReportSuccess(reports);
 };
 
 export default versionator;

@@ -1,7 +1,7 @@
 import yargs, { Argv } from 'yargs';
 import versionator from './index';
 import render from './render';
-import { Arguments, Report } from '../typings';
+import { Arguments, FullReport } from '../typings';
 
 const { argv }: Argv<Arguments> = yargs
   .boolean('allow-prefixed')
@@ -12,7 +12,7 @@ const { argv }: Argv<Arguments> = yargs
   const reports = await versionator(argv);
   let hasFailure = false;
 
-  reports.forEach((report: Report): void => {
+  reports.forEach((report: FullReport): void => {
     if (!report.success) {
       hasFailure = true;
     }

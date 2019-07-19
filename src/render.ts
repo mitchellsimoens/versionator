@@ -1,14 +1,14 @@
 import Table, { Cell, HorizontalTable } from 'cli-table3';
 import { green, red } from 'colorette';
-import { DependencyProps, Report, Result } from '../typings';
+import { DependencyProps, FullResult, Report } from '../typings';
 
-const outputResults = (table: HorizontalTable, name: DependencyProps, report: Report): boolean => {
-  const results = report[name];
+const parseResults = (table: HorizontalTable, name: DependencyProps, report: Report): boolean => {
+  const results = report[name] as FullResult[];
 
   if (results.length) {
     table.push(
       [{ colSpan: 7, content: name }],
-      ...results.map((result: Result): Cell[] => {
+      ...results.map((result: FullResult): Cell[] => {
         const color = result.success ? green : red;
 
         return [
@@ -29,7 +29,7 @@ const outputResults = (table: HorizontalTable, name: DependencyProps, report: Re
   return false;
 };
 
-const render = (report: Report): void => {
+export const parseTable = (report: Report): HorizontalTable => {
   const table = new Table({
     head: ['', 'Package', 'Local Version', 'Latest Version', 'Has Prefix', 'Has Update', 'Success'],
     style: { head: ['white'] },
@@ -37,16 +37,22 @@ const render = (report: Report): void => {
 
   table.push([{ colSpan: 7, content: report.cwd }]);
 
-  const hadDependencies = outputResults(table, 'dependencies', report);
-  const hadDevDependencies = outputResults(table, 'devDependencies', report);
-  const hadOptionalDependencies = outputResults(table, 'optionalDependencies', report);
-  const hadPeerDependencies = outputResults(table, 'peerDependencies', report);
+  const hadDependencies = parseResults(table, 'dependencies', report);
+  const hadDevDependencies = parseResults(table, 'devDependencies', report);
+  const hadOptionalDependencies = parseResults(table, 'optionalDependencies', report);
+  const hadPeerDependencies = parseResults(table, 'peerDependencies', report);
 
   const hadRows = hadDependencies || hadDevDependencies || hadOptionalDependencies || hadPeerDependencies;
 
   if (!hadRows) {
     table.push([{ colSpan: 7, content: 'No dependencies found' }]);
   }
+
+  return table;
+};
+
+const render = (report: Report): void => {
+  const table = parseTable(report);
 
   // eslint-disable-next-line no-console
   console.log(table.toString());
