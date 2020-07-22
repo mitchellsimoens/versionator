@@ -113,6 +113,12 @@ const checkLatestVersions = (): Promise<void[]> =>
   );
 
 const checkForUpdate = (version: string, latest: string, args: Arguments): boolean => {
+  const satisfies = semver.satisfies(latest, `<=${version}`);
+
+  if (satisfies) {
+    return false;
+  }
+
   const diff = semver.diff(version, latest);
 
   if (diff === null) {

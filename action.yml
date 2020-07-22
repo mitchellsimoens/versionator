@@ -1,0 +1,22 @@
+name: NPM Version Check
+author: Mitchell Simoens
+description: Check if any package.json has a dependency that has an update
+branding:
+  color: yellow
+  icon: check-square
+inputs:
+  allow_prefixed:
+    description: Set to true to allow prefixed versions.
+    required: false
+  allow-update:
+    description: Set to a semver version (patch, major, etc) to allow the minimum level to pass.
+    required: false
+  exclude:
+    description: A glob pattern to exclude from checking.
+    required: false
+  shallow:
+    description: Set to true to only check the package.json in the root of the repository.
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
