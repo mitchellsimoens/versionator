@@ -1,7 +1,7 @@
 import globby from 'globby';
 import { dirname, join } from 'path';
 import readPkg, { NormalizedPackageJson } from 'read-pkg';
-import semver from 'semver';
+import semver, { ReleaseType } from 'semver';
 import request from './request';
 import {
   Arguments,
@@ -14,8 +14,6 @@ import {
   Report,
   Result,
 } from '../typings';
-
-export * from '../typings';
 
 const PREFIX_RE = /^\^|~/;
 
@@ -127,7 +125,7 @@ const checkForUpdate = (version: string, latest: string, args: Arguments): boole
     return true;
   }
 
-  const allowedValue = releaseValues[allowUpdate];
+  const allowedValue = releaseValues[allowUpdate as ReleaseType];
   const diffValue = releaseValues[diff];
 
   return allowedValue < diffValue;

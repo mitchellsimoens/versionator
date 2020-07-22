@@ -1,7 +1,7 @@
 module.exports = {
   env: {
     es6: true,
-    node: true
+    node: true,
   },
   extends: [
     'eslint:recommended',
@@ -10,7 +10,7 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
-    'plugin:import/typescript'
+    'plugin:import/typescript',
   ],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prettier', 'import'],
@@ -18,6 +18,16 @@ module.exports = {
     'prettier/prettier': 'error',
     'class-methods-use-this': 'off',
     curly: ['error', 'all'],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        js: 'never',
+        jsx: 'never',
+        ts: 'never',
+        tsx: 'never',
+      },
+    ],
     'max-len': [
       'error',
       {
@@ -27,12 +37,12 @@ module.exports = {
         ignoreStrings: true,
         ignoreTemplateLiterals: true,
         ignoreTrailingComments: true,
-        ignoreUrls: true
-      }
+        ignoreUrls: true,
+      },
     ],
     'no-console': 'error',
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/no-unused-vars': 'error',
-    '@typescript-eslint/no-explicit-any': 'error'
-  }
-}
+    '@typescript-eslint/no-explicit-any': 'error',
+  },
+};

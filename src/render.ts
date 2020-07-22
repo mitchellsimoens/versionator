@@ -1,8 +1,8 @@
-import Table, { Cell, HorizontalTable } from 'cli-table3';
+import Table, { Cell, Table as TableType } from 'cli-table3';
 import { green, red } from 'colorette';
 import { DependencyProps, FullResult, Report } from '../typings';
 
-const parseResults = (table: HorizontalTable, name: DependencyProps, report: Report): boolean => {
+const parseResults = (table: TableType, name: DependencyProps, report: Report): boolean => {
   const results = report[name] as FullResult[];
 
   if (results.length) {
@@ -29,11 +29,11 @@ const parseResults = (table: HorizontalTable, name: DependencyProps, report: Rep
   return false;
 };
 
-export const parseTable = (report: Report): HorizontalTable => {
+export const parseTable = (report: Report): TableType => {
   const table = new Table({
     head: ['', 'Package', 'Local Version', 'Latest Version', 'Has Prefix', 'Has Update', 'Success'],
     style: { head: ['white'] },
-  }) as HorizontalTable;
+  }) as TableType;
 
   table.push([{ colSpan: 7, content: report.cwd }]);
 

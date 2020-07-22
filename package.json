@@ -18,7 +18,6 @@
     "build:check": "tsc --noEmit",
     "bump": "npm version patch",
     "lint": "eslint 'bin/**/*' 'src/**/*.ts'",
-    "lint-staged": "lint-staged",
     "postbump": "git push --follow-tags",
     "start": "node -r ts-node/register src/cli.ts"
   },
@@ -47,7 +46,7 @@
   "homepage": "https://github.com/mitchellsimoens/versionator#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run lint-staged"
+      "pre-commit": "yarn lint-staged"
     }
   },
   "lint-staged": {
@@ -57,35 +56,35 @@
     ]
   },
   "dependencies": {
-    "cli-table3": "0.5.1",
-    "colorette": "1.1.0",
-    "globby": "10.0.1",
+    "cli-table3": "0.6.0",
+    "colorette": "1.2.1",
+    "globby": "11.0.1",
     "read-pkg": "5.2.0",
-    "semver": "6.2.0",
-    "yargs": "13.3.0"
+    "semver": "7.3.2",
+    "yargs": "15.4.1"
   },
   "devDependencies": {
     "@types/globby": "9.1.0",
-    "@types/node": "12.6.8",
+    "@types/node": "14.0.24",
     "@types/read-pkg": "5.1.0",
-    "@types/semver": "6.0.1",
-    "@types/yargs": "13.0.0",
-    "@typescript-eslint/eslint-plugin": "1.12.0",
-    "@typescript-eslint/parser": "1.12.0",
-    "eslint": "6.0.1",
-    "eslint-config-airbnb": "17.1.1",
-    "eslint-config-prettier": "6.0.0",
+    "@types/semver": "7.3.1",
+    "@types/yargs": "15.0.5",
+    "@typescript-eslint/eslint-plugin": "3.7.0",
+    "@typescript-eslint/parser": "3.7.0",
+    "eslint": "7.5.0",
+    "eslint-config-airbnb": "18.2.0",
+    "eslint-config-prettier": "6.11.0",
     "eslint-import-resolver-lerna": "1.1.0",
-    "eslint-import-resolver-typescript": "1.1.1",
-    "eslint-plugin-import": "2.18.1",
-    "eslint-plugin-jest": "22.11.1",
-    "eslint-plugin-jsx-a11y": "6.2.3",
-    "eslint-plugin-prettier": "3.1.0",
-    "eslint-plugin-react": "7.14.2",
-    "husky": "3.0.1",
-    "lint-staged": "9.2.0",
-    "prettier": "1.18.2",
-    "ts-node": "8.3.0",
-    "typescript": "3.5.3"
+    "eslint-import-resolver-typescript": "2.0.0",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-jest": "23.18.0",
+    "eslint-plugin-jsx-a11y": "6.3.1",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-react": "7.20.3",
+    "husky": "4.2.5",
+    "lint-staged": "10.2.11",
+    "prettier": "2.0.5",
+    "ts-node": "8.10.2",
+    "typescript": "3.9.7"
   }
 }

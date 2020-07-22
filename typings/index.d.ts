@@ -2,7 +2,7 @@ import { ReleaseType } from 'semver';
 
 export interface Arguments {
   'allow-prefixed'?: boolean;
-  'allow-update'?: ReleaseType;
+  'allow-update'?: string | ReleaseType;
   exclude?: string;
   shallow?: boolean;
 }

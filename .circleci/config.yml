@@ -1,9 +1,9 @@
 aliases:
   - &restore-npm-cache
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
+    key: v1-dependencies-{{ checksum "package-lock.json" }}
     name: Restoring node_modules/ cache
   - &save-npm-cache
-    key: v1-dependencies-{{ checksum "yarn.lock" }}
+    key: v1-dependencies-{{ checksum "package-lock.json" }}
     name: Saving node_modules/ cache
     paths:
       - node_modules
@@ -21,7 +21,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-npm-cache
-      - run: yarn build
+      - run: npm run build
 
   install-dependencies:
     <<: *defaults
@@ -30,7 +30,7 @@ jobs:
       - restore_cache: *restore-npm-cache
       - run:
           name: Install Node modules
-          command: yarn
+          command: npm ci
       - save_cache: *save-npm-cache
 
   lint:
@@ -38,7 +38,7 @@ jobs:
     steps:
       - checkout
       - restore_cache: *restore-npm-cache
-      - run: yarn lint
+      - run: npm run lint
 
   publish:
     <<: *defaults
@@ -47,31 +47,31 @@ jobs:
       - run:
           name: Setup .npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
-      - run: yarn
-      - run: yarn lint
-      - run: yarn build
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
       - run: npm publish
 
 workflows:
   version: 2
-  test-and-build:
-    jobs:
-      - install-dependencies:
-          filters:
-            tags:
-              ignore: /^v.*/
-      - lint:
-          requires:
-            - install-dependencies
-          filters:
-            tags:
-              ignore: /^v.*/
-      - build:
-          requires:
-            - lint
-          filters:
-            tags:
-              ignore: /^v.*/
+  # test-and-build:
+  #   jobs:
+  #     - install-dependencies:
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  #     - lint:
+  #         requires:
+  #           - install-dependencies
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
+  #     - build:
+  #         requires:
+  #           - lint
+  #         filters:
+  #           tags:
+  #             ignore: /^v.*/
   publish:
     jobs:
       - publish:
