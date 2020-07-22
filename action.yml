@@ -1,4 +1,4 @@
-name: NPM Version Check
+name: versionator
 author: Mitchell Simoens
 description: Check if any package.json has a dependency that has an update
 branding:
