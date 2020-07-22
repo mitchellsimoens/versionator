@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/@mitchellsimoens/versionator.svg)](https://www.npmjs.com/package/@mitchellsimoens/versionator)
 [![npm](https://img.shields.io/npm/dm/@mitchellsimoens/versionator.svg)](https://www.npmjs.com/package/@mitchellsimoens/versionator)
-[![CircleCI](https://circleci.com/gh/mitchellsimoens/versionator.svg?style=svg&circle-token=a552b2094264094f567d0e9c0e1c76d6e44b7a04)](https://circleci.com/gh/mitchellsimoens/versionator)
+[![Build](https://github.com/mitchellsimoens/versionator/workflows/Test/badge.svg)](https://github.com/mitchellsimoens/versionator/actions?query=workflow%3ATest)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 [![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](./LICENSE)
 
